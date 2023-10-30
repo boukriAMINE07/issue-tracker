@@ -1,5 +1,7 @@
+import {Button } from '@radix-ui/themes'
 const Issues = () => {
-  return <div>IssuesPage</div>;
+  return <div><Button>New Issue</Button>
+  </div>;
 };
 
 export default Issues;
