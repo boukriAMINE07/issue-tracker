@@ -9,7 +9,7 @@ import {useState} from "react";
 import {IoInformationCircle} from "react-icons/io5";
 import {createIssueSchema} from "@/app/validation/validationSchema";
 import {zodResolver} from "@hookform/resolvers/zod"
-import {boolean, z} from "zod";
+import { z} from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
 
@@ -19,11 +19,22 @@ const NewIssue = () => {
     const [error, setError] = useState('');
     const [isSubmitting, setISubmitting] = useState(false);
 
+
     const router = useRouter();
     const {register, control, handleSubmit, formState: {errors}} = useForm<IssueForm>({
         resolver: zodResolver(createIssueSchema)
     });
+    const onSubmit=handleSubmit(async (data) => {
+        try {
+            setISubmitting(true)
+            await axios.post('/api/issues', data)
+            router.push("/issues");
+        } catch (error) {
+            setISubmitting(false)
+            setError("An unexpected error occurred .")
+        }
 
+    })
     return (
         <div className="max-w-xl ">
             {
@@ -39,17 +50,7 @@ const NewIssue = () => {
             }
             <form
                 className=" space-y-3"
-                onSubmit={handleSubmit(async (data) => {
-                    try {
-                        setISubmitting(true)
-                        await axios.post('/api/issues', data)
-                        router.push("/issues");
-                    } catch (error) {
-                        setISubmitting(false)
-                        setError("An unexpected error occurred .")
-                    }
-
-                })}
+                onSubmit={onSubmit}
             >
                 <TextField.Root>
                     <TextField.Input placeholder="Title"  {...register("title")} />
